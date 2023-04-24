@@ -1,12 +1,9 @@
 package com.example.posts.ressources;
 import com.example.posts.model.Post;
-import com.example.posts.model.User;
 import com.example.posts.service.PostService;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-
-import java.security.PublicKey;
 import java.util.List;
 
 @Path("/posts")
@@ -25,7 +22,7 @@ public class PostRessource {
     @Path("/{id}")
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getPost(@PathParam("id") int id) {
-        Post post = postService.getPostJdbcDao().findById(id);
+        Post post = postService.getPostById(id);
         if (post != null) {
             return Response
                     .status(Response.Status.FOUND)
@@ -40,9 +37,9 @@ public class PostRessource {
     @POST
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
-    public Response createNewPost(Post post){
+    public Response createPost(Post post){
         System.out.println(post.getAuthor()+"/"+post.getContent()+"/"+post.getTitle());
-        postService.getPostJdbcDao().create(post);
+        postService.createPost(post);
         //System.out.println(test);
         return Response
                 .status(Response.Status.CREATED)
@@ -54,9 +51,8 @@ public class PostRessource {
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response deletePost(@PathParam("id") int id){
-        Post post = postService.getPostJdbcDao().findById(id);
-        postService.getPostJdbcDao().delete(post);
-
+        Post post = postService.getPostById(id);
+        postService.deletePost(post);
         return Response
                 .status(Response.Status.CREATED)
                 .entity(post)
@@ -67,15 +63,13 @@ public class PostRessource {
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response updatePost(@PathParam("id") int id,Post updatedPost){
-
         Post post = postService.getPostById(id);
-        postService.getPostJdbcDao().update(post);
-
+        System.out.println(post.getId()+"/"+ post.getTitle());
+        postService.update(updatedPost);
+        System.out.println(post.getId()+"/"+ post.getTitle());
         return Response
                 .status(Response.Status.CREATED)
                 .entity(post)
                 .build();
     }
-
-
 }

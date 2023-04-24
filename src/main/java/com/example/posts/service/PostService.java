@@ -18,7 +18,7 @@ public class PostService {
     public List<Post> fetchAllPosts() {
         return postJdbcDao.findAll();
     }
-    public Post createPost(String title, String author, String content) {
+    public Post createNewPost(String title, String author, String content) {
 
         LocalDateTime time = LocalDateTime.now();
         Post p = new Post( title, author, content, "https://picsum.photos/200/300?random=" + ++idSequence,time);
@@ -36,5 +36,17 @@ public class PostService {
 
     public Post getPostById(int id) {
         return postJdbcDao.findById(id);
+    }
+
+    public void createPost(Post post) {
+        postJdbcDao.create(post);
+    }
+
+    public void deletePost(Post post) {
+        postJdbcDao.delete(post);
+    }
+
+    public void update(Post post) {
+        postJdbcDao.update(post);
     }
 }

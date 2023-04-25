@@ -38,9 +38,8 @@ public class PostRessource {
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response createPost(Post post){
-        System.out.println(post.getAuthor()+"/"+post.getContent()+"/"+post.getTitle());
+        System.out.println(post.getAuthor()+"/"+post.getContent()+"/"+post.getTitle()+"/"+(post.getCategory()));
         postService.createPost(post);
-        //System.out.println(test);
         return Response
                 .status(Response.Status.CREATED)
                 .entity(post)
@@ -52,6 +51,7 @@ public class PostRessource {
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response deletePost(@PathParam("id") int id){
         Post post = postService.getPostById(id);
+        System.out.println(post.getId());
         postService.deletePost(post);
         return Response
                 .status(Response.Status.CREATED)
@@ -64,12 +64,10 @@ public class PostRessource {
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response updatePost(@PathParam("id") int id,Post updatedPost){
         Post post = postService.getPostById(id);
-        System.out.println(post.getId()+"/"+ post.getTitle());
         postService.update(updatedPost);
-        System.out.println(post.getId()+"/"+ post.getTitle());
         return Response
                 .status(Response.Status.CREATED)
-                .entity(post)
+                .entity(updatedPost)
                 .build();
     }
 }

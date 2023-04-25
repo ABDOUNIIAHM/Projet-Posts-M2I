@@ -21,8 +21,6 @@ public class PostListServlet extends HttpServlet {
 
 
         req.setAttribute("posts", postList);
-        req
-                .getRequestDispatcher("/WEB-INF/post-list.jsp")
-                .forward(req, resp);
+        req.getRequestDispatcher("/WEB-INF/post-list.jsp").forward(req, resp);
     }
 }

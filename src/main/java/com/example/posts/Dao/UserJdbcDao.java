@@ -1,28 +1,34 @@
 package com.example.posts.Dao;
 
 import com.example.posts.model.User;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserJdbcDao implements UserDao{
+
+    private User mapToUser(ResultSet resultSet) throws SQLException {
+        Integer id = resultSet.getInt("id");
+        String email = resultSet.getString("email");
+        String password = resultSet.getString("password");
+        return new User(id,email,password);
+    }
     @Override
-    public boolean create(User entity) {
+    public User create(User entity) {
         Connection connection = ConnectionManager.getInstance();
-        boolean insertOk = false;
         try{
             PreparedStatement prepareStatement = connection.prepareStatement("INSERT INTO users(email, password) VALUES(?,?)");
             prepareStatement.setString(1, entity.getEmail());
             prepareStatement.setString(2, entity.getPassword());
 
             int rowsAffected = prepareStatement.executeUpdate();
-
-            insertOk = rowsAffected > 0;
+            if(rowsAffected == 0){
+                throw new RuntimeException("User has not been created !");
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return insertOk;
+        return entity;
     }
 
     @Override
@@ -33,10 +39,8 @@ public class UserJdbcDao implements UserDao{
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery("SELECT id, email, password FROM users");
             while (resultSet.next()){
-                Integer id = resultSet.getInt("id");
-                String email = resultSet.getString("email");
-                String password = resultSet.getString("password");
-                userList.add(new User(id, email, password));
+                User user = mapToUser(resultSet);
+                userList.add(user);
             }
         }catch (SQLException e){
             e.printStackTrace();
@@ -60,18 +64,15 @@ public class UserJdbcDao implements UserDao{
 
     }
 
-    public User findByUseremail(String useremailFind) {
+    public User findByUseremail(String userEmailFind) {
         User userFound = null;
         Connection connection = ConnectionManager.getInstance();
         try {
             PreparedStatement statement = connection.prepareStatement("SELECT id, email, password FROM users WHERE email=?");
-            statement.setString(1, useremailFind);
+            statement.setString(1, userEmailFind);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                Integer id = resultSet.getInt("id");
-                String email = resultSet.getString("email");
-                String password = resultSet.getString("password");
-                userFound = new User(id, email, password);
+                userFound = mapToUser(resultSet);
             }
         } catch (SQLException e) {
             e.printStackTrace();

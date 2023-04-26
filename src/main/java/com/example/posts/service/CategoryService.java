@@ -9,11 +9,18 @@ import java.sql.Connection;
 import java.util.List;
 
 public class CategoryService {
-    private static CategoryDao categoryDao = new CategoryJdbcDao();
+    private CategoryDao categoryDao = new CategoryJdbcDao();
     Connection connection = ConnectionManager.getInstance();
+
+
+    public void setCategoryDao(CategoryDao categoryDao) {
+        this.categoryDao = categoryDao;
+    }
+
     public List<Category> findAll(){
         return categoryDao.findAll();
     }
+
     public void create(Category cat){
         categoryDao.create(cat);
     }

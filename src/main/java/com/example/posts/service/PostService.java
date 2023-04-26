@@ -12,7 +12,7 @@ import java.util.*;
 
 // CRUD
 public class PostService {
-    private static PostDao postJdbcDao = new PostJdbcDao();
+    private PostDao postJdbcDao = new PostJdbcDao();
     private static Faker faker = new Faker(new Locale("fr"));
     private CategoryDao categoryDao = new CategoryJdbcDao();
     Connection connection = ConnectionManager.getInstance();
@@ -33,6 +33,10 @@ public class PostService {
         return new Post(id,title,author,content,pictureUrl,createdAt,cat);
     }
 
+    public void setPostJdbcDao(PostDao postJdbcDao) {
+        this.postJdbcDao = postJdbcDao;
+    }
+
     public List<Post> fetchAllPosts() {
         return postJdbcDao.findAll();
     }
@@ -40,8 +44,8 @@ public class PostService {
         Category cat = categoryDao.findById(idCategory);
         LocalDateTime time = LocalDateTime.now();
         Post p = new Post(title, author, content, "https://picsum.photos/200/300?random=" + ++idSequence,time,cat);
-        postJdbcDao.create(p);
-        return p;
+        Post createdPost = postJdbcDao.create(p);
+        return createdPost;
     }
     public List<Post> getByCategoryId(int id){
         List<Post> posts = new ArrayList<>();
@@ -57,6 +61,23 @@ public class PostService {
             e.printStackTrace();
         }
         return posts;
+    }
+
+    public List<Post> findByDesignation(String mc){
+        List<Post> foundPosts = new ArrayList<>();
+        String query = "SELECT * FROM posts WHERE title LIKE ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(query)){
+            ps.setString(1,"%"+mc+"%");
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                Post post = mapToPost(rs);
+                foundPosts.add(post);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return foundPosts;
     }
 
     public static Faker getFaker() {
@@ -81,5 +102,9 @@ public class PostService {
 
     public void update(Post post) {
         postJdbcDao.update(post);
+    }
+
+    public void setCategoryDao(CategoryDao categoryDao) {
+        this.categoryDao = categoryDao;
     }
 }

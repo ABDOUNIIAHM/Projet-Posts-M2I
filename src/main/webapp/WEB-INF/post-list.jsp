@@ -11,6 +11,12 @@
 <c:import url="header.jsp"></c:import>
 <div class="container">
     <h1>Posts</h1>
+    <form action="researched-posts">
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="Search..." name="research">
+        <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Search</button>
+    </div>
+    </form>
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-3 align-content-center">
         <c:forEach var="p" items="${posts}">
             <div class="col">

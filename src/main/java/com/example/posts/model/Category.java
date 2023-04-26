@@ -2,12 +2,13 @@ package com.example.posts.model;
 
 import com.example.posts.dto.CategoryDto;
 
-import java.util.Objects;
+import java.util.List;
 
 
 public class Category {
     private int id;
     private String name;
+    private List<Post> posts;
 
     public Category(int id, String name) {
         this.id = id;
